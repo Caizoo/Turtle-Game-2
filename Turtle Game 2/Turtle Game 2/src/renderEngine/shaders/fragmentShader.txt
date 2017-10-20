@@ -1,0 +1,28 @@
+#version 140
+
+in vec2 textureCoords;
+
+out vec4 out_Colour;
+
+uniform sampler2D textureSampler;
+uniform float transparency;
+uniform float brightness;
+
+uniform bool grayscale;
+
+void main(void) {
+	vec4 textureColour = texture(textureSampler, textureCoords);
+	if(textureColour.a < 0.01) {
+		discard;
+	}
+	out_Colour = textureColour;
+	out_Colour.a = texture(textureSampler, textureCoords).a;
+	if(transparency < 1) {
+		out_Colour.a = transparency*out_Colour.a;
+	}
+	out_Colour.rgb *= brightness;
+	if(grayscale) {
+		float colour = out_Colour.r*0.21 + out_Colour.g*0.72 + out_Colour.b*0.07;
+		out_Colour.rgb = vec3(colour,colour,colour);	
+	}
+}
